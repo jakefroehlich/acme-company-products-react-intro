@@ -2,7 +2,7 @@ const URL = `https://acme-users-api-rev.herokuapp.com/api/`;
 
 const e = (type) => React.createElement(type)
 
-const app = document.querySelector(`#app`);
+const root = document.querySelector(`#app`);
 
 const apiFetch = (type) => {
     return fetch(`${URL}${type}`)
@@ -21,17 +21,15 @@ class App extends React.Component {
     componentDidMount() {
         apiFetch(`products`).then(data => {
             console.log(this.state.Products);
-            this.state.Products = data
+            this.setState({ Products: data })
             console.log('data', data)
         })
 
         apiFetch(`companies`).then(data => {
             console.log(this.state.Companies);
-            this.state.Companies = data
+            this.setState({ Companies: data })
             console.log('data', data)
         })
-
-        this.render()
     }
 
     render() {
@@ -42,26 +40,32 @@ class App extends React.Component {
         for( let i = 0; i < Products.length; i++) {
             let product = Products[i];
 
-            productArray.push(product)
+            productArray.push(e(`li`, null, `${product.name}`))
         }
 
-        const ulOne = e(`ul`, null, ...productArray)
+        const ulOne = React.createElement(`ul`, null, [...productArray])
 
-        const lisTwo = Companies.map(company => {
-            e(`li`, null, `${company.name}`)
-        })
+        // const lisTwo = Companies.map(company => {
+        //     e(`li`, null, `${company.name}`)
+        // })
 
-        const ulTwo = e(`ul`, null, ...lisTwo)
+        let companyArray = [];
+
+        for( let i = 0; i < Companies.length; i++) {
+            let company = Companies[i];
+
+            companyArray.push(e(`li`, null, `${company.name}`));
+        }
+
+        const ulTwo = e(`ul`, null, [...companyArray])
+
+        console.log(ulOne)
 
         const divOne = e(`div`, null, ulOne)
         const divTwo = e(`div`, null, ulTwo)
 
-        app.append(divOne, divTwo);
-
-        console.log(Products, Companies)
-
-        return e(`div`, null, app)
+        return e(`div`, null, divOne, divTwo)
     }
 }
 
-ReactDOM.render(React.createElement(App), app)
+ReactDOM.render(React.createElement(App), root)
